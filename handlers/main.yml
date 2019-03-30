@@ -7,5 +7,5 @@
   listen: "restart consul"
 
 - name: Update consul config
-  shell: docker kill -s HUP {{ consul.container.name }}
+  shell: docker kill -s HUP {{ consul_container.name }}
   listen: "reload consul"
