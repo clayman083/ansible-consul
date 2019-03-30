@@ -1,0 +1,23 @@
+---
+
+consul_network:
+  name: backend
+  subnet: 10.8.0.0/16
+
+# Agent settings
+consul_server: no
+
+consul_datacenter: dc
+consul_node: "{{ ansible_hostname }}"
+
+consul_encrypt: ''
+
+consul_servers: "{{ groups['servers'] }}"
+
+# Exporter settings
+consul_exporter:
+  enabled: no
+
+  host: "{{ private_network.address }}"
+  port: 9107
+

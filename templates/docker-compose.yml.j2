@@ -1,0 +1,59 @@
+---
+
+version: '3.5'
+
+volumes:
+  data:
+
+networks:
+  {{ consul_network.name }}:
+    external: true
+
+services:
+  server:
+    container_name: {{ consul_container.name }}
+    image: {{ consul_container.image }}
+    command: consul agent -config-file /etc/consul/config.json -config-dir /etc/consul/conf.d
+{% if env != 'local' %}
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "unixgram:///dev/log"
+        tag: consul
+{% endif %}
+    networks:
+      - {{ consul_network.name }}
+    ports:
+      - {{ private_network.address }}:8300:8300
+      - {{ private_network.address }}:8301:8301
+      - {{ private_network.address }}:8301:8301/udp
+      - {{ private_network.address }}:8302:8302
+      - {{ private_network.address }}:8302:8302/udp
+      - {{ private_network.address }}:8400:8300
+      - {{ private_network.address }}:8500:8500
+      - {{ private_network.address }}:8600:8600/udp
+    restart: {{ consul_container.restart }}
+    stop_signal: SIGINT
+    volumes:
+      - ./:/etc/consul
+      - data:/consul/data
+
+{% if consul_server and consul_exporter.enabled %}
+  exporter:
+    container_name: {{ consul_exporter_container.name }}
+    image: {{ consul_exporter_container.image }}
+    dns: {{ consul_exporter_container.dns }}
+    command: --consul.server={{ private_network.address }}:8500
+{% if env != 'local' %}
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "unixgram:///dev/log"
+        tag: consul_exporter
+{% endif %}
+    networks:
+      - {{ consul_network.name }}
+    ports:
+      - {{ consul_exporter.host }}:{{ consul_exporter.port }}:9107
+    restart: {{ consul_exporter_container.restart }}
+{% endif %}
