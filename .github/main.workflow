@@ -1,6 +1,6 @@
 workflow "Pipeline" {
   on = "push"
-  resolves = ["lint", "test"]
+  resolves = ["Lint", "Test"]
 }
 
 action "Lint" {
