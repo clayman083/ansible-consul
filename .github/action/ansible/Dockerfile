@@ -7,7 +7,7 @@ LABEL "com.github.actions.color"="red"
 
 RUN apk add --update --no-cache make libc-dev python3-dev linux-headers gcc g++ openssl-dev libffi-dev && \
     pip install -U pip && \
-    pip install ansible && \
+    pip install ansible ansible-lint && \
     apk del make libc-dev python3-dev linux-headers gcc g++
 
 COPY . /root/code

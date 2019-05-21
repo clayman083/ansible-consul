@@ -1,9 +1,14 @@
-workflow "Test pipeline" {
+workflow "Pipeline" {
   on = "push"
-  resolves = ["test"]
+  resolves = ["lint", "test"]
 }
 
-action "test" {
-  uses = "./.github/action/test"
+action "Lint" {
+  uses = "./.github/action/ansible"
+  runs = ["ansible-lint", "."]
+}
+
+action "Test" {
+  uses = "./.github/action/ansible"
   runs = ["ansible-playbook", "tests/test.yml", "-i", "tests/inventory", "--syntax-check"]
 }
