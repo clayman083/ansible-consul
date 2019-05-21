@@ -1,8 +1,14 @@
 ---
 
+consul_dir: "{{ services_dir }}/consul"
+consul_conf_dir: "{{ consul_dir }}/conf.d"
+
 consul_network:
   name: backend
   subnet: 10.8.0.0/16
+
+consul_service: consul.service.consul
+
 
 # Agent settings
 consul_server: no
@@ -14,10 +20,31 @@ consul_encrypt: ''
 
 consul_servers: "{{ groups['servers'] }}"
 
+
+# Container settings
+consul_container:
+  image: consul:1.4.4
+  name: consul
+  restart: always
+  network: "{{ consul_network }}"
+
+
 # Exporter settings
 consul_exporter:
-  enabled: no
-
   host: "{{ private_network.address }}"
   port: 9107
 
+  container:
+    image: prom/consul-exporter:v0.4.0
+    name: consul_exporter
+    dns: "{{ private_network.address }}"
+    network: "{{ consul_network }}"
+    restart: always
+
+  service:
+    name: consul-exporter
+    tags:
+      - "{{ env }}"
+    meta:
+      hostname: "{{ ansible_hostname }}"
+      tier: "{{ env }}"

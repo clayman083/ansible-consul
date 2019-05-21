@@ -1,14 +1,14 @@
 {
   "services": [
-{% if consul_server and consul_exporter.enabled %}
+{% if consul_server %}
     {
-      "name": "{{ consul_exporter_service.name }}",
-{% if consul_exporter_service.tags %}
-      "tags": ["{{ consul_exporter_service.tags|join('", "') }}"],
+      "name": "{{ consul_exporter.service.name }}",
+{% if consul_exporter.service.tags %}
+      "tags": ["{{ consul_exporter.service.tags|join('", "') }}"],
 {% endif %}
-{% if consul_exporter_service.meta %}
+{% if consul_exporter.service.meta %}
       "meta": {
-{% for key, value in consul_exporter_service.meta.items() %}
+{% for key, value in consul_exporter.service.meta.items() %}
         "{{ key }}": "{{ value }}"{% if not loop.last %},{% endif %}
 
 {% endfor %}

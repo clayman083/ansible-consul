@@ -5,10 +5,6 @@ version: '3.5'
 volumes:
   data:
 
-networks:
-  {{ consul_network.name }}:
-    external: true
-
 services:
   server:
     container_name: {{ consul_container.name }}
@@ -21,8 +17,6 @@ services:
         syslog-address: "unixgram:///dev/log"
         tag: consul
 {% endif %}
-    networks:
-      - {{ consul_network.name }}
     ports:
       - {{ private_network.address }}:8300:8300
       - {{ private_network.address }}:8301:8301
@@ -38,11 +32,11 @@ services:
       - ./:/etc/consul
       - data:/consul/data
 
-{% if consul_server and consul_exporter.enabled %}
+{% if consul_server %}
   exporter:
-    container_name: {{ consul_exporter_container.name }}
-    image: {{ consul_exporter_container.image }}
-    dns: {{ consul_exporter_container.dns }}
+    container_name: {{ consul_exporter.container.name }}
+    image: {{ consul_exporter.container.image }}
+    dns: {{ consul_exporter.container.dns }}
     command: --consul.server={{ private_network.address }}:8500
 {% if env != 'local' %}
     logging:
@@ -51,9 +45,7 @@ services:
         syslog-address: "unixgram:///dev/log"
         tag: consul_exporter
 {% endif %}
-    networks:
-      - {{ consul_network.name }}
     ports:
       - {{ consul_exporter.host }}:{{ consul_exporter.port }}:9107
-    restart: {{ consul_exporter_container.restart }}
+    restart: {{ consul_exporter.container.restart }}
 {% endif %}
