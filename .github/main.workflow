@@ -1,6 +1,6 @@
 workflow "Pipeline" {
   on = "push"
-  resolves = ["Test"]
+  resolves = "Test"
 }
 
 action "Lint" {
@@ -9,7 +9,7 @@ action "Lint" {
 }
 
 action "Test" {
+  needs = "Lint"
   uses = "./.github/action/ansible"
   args = ["ansible-playbook", "tests/test.yml", "-i", "tests/inventory", "--syntax-check"]
-  resolves = ["Lint"]
 }
