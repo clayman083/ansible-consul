@@ -25,6 +25,3 @@
     - src: dnsmasq.conf
       dest: "{{ dnsmasq_conf }}/consul.json"
   notify: restart dnsmasq
-
-- name: Run service
-  shell: docker-compose up -d chdir={{ consul_dir }}

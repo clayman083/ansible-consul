@@ -6,6 +6,6 @@
     chdir: "{{ consul_dir }}"
   listen: "restart consul"
 
-- name: Update consul config
+- name: Update consul config  # noqa 305
   shell: docker kill -s HUP {{ consul_container.name }}
   listen: "reload consul"
