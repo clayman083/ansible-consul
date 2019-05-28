@@ -1,26 +1,26 @@
 {
   "services": [
-{% if consul_server %}
+{% if consul.agent.server %}
     {
-      "name": "{{ consul_exporter.service.name }}",
-{% if consul_exporter.service.tags %}
-      "tags": ["{{ consul_exporter.service.tags|join('", "') }}"],
+      "name": "{{ consul.exporter.service.name }}",
+{% if consul.exporter.service.tags %}
+      "tags": ["{{ consul.exporter.service.tags|join('", "') }}"],
 {% endif %}
-{% if consul_exporter.service.meta %}
+{% if consul.exporter.service.meta %}
       "meta": {
-{% for key, value in consul_exporter.service.meta.items() %}
+{% for key, value in consul.exporter.service.meta.items() %}
         "{{ key }}": "{{ value }}"{% if not loop.last %},{% endif %}
 
 {% endfor %}
       },
 {% endif %}
-      "address": "{{ consul_exporter.host }}",
-      "port": {{ consul_exporter.port }},
+      "address": "{{ consul.exporter.host }}",
+      "port": {{ consul.exporter.port }},
       "checks": [
         {
           "id": "consul_exporter_check",
           "name": "Prometheus consul exporter health check",
-          "http": "http://{{ consul_exporter.host }}:{{ consul_exporter.port }}",
+          "http": "http://{{ consul.exporter.host }}:{{ consul.exporter.port }}",
           "interval": "20s"
         }
       ]

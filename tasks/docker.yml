@@ -1,27 +1,29 @@
 ---
 
 - name: Prepare folders
-  file: path={{ consul_conf_dir }} state=directory
+  file: path={{ consul.conf_dir }} state=directory
 
 - name: Assemble config files
   template: src={{ item.src }}.j2 dest={{ item.dest }}
   with_items:
     - src: config.json
-      dest: "{{ consul_dir }}/config.json"
+      dest: "{{ consul.service_dir }}/config.json"
     - src: docker-compose.yml
-      dest: "{{ consul_dir }}/docker-compose.yml"
+      dest: "{{ consul.service_dir }}/docker-compose.yml"
   notify: restart consul
 
 - name: Assemble consul service config
   template: src={{ item.src }}.j2 dest={{ item.dest }}
   with_items:
     - src: consul.json
-      dest: "{{ consul_conf_dir }}/consul.json"
+      dest: "{{ consul.conf_dir }}/consul.json"
+  when: consul.exporter.enabled|default(False)
   notify: reload consul
 
 - name: Assemble consul dnsmasq config
   template: src={{ item.src }}.j2 dest={{ item.dest }}
   with_items:
     - src: dnsmasq.conf
-      dest: "{{ dnsmasq_conf }}/consul.json"
+      dest: "{{ consul.dnsmasq_conf_dir }}/consul.json"
+  when: consul.dnsmasq_conf_dir|default(False)
   notify: restart dnsmasq

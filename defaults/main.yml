@@ -1,50 +1,55 @@
 ---
 
-consul_dir: "{{ services_dir }}/consul"
-consul_conf_dir: "{{ consul_dir }}/conf.d"
+consul:
+  service: consul.service.consul
 
-consul_network:
-  name: backend
-  subnet: 10.8.0.0/16
+  dnsmasq_conf_dir: /etc/dnsmasq.d
+  service_dir: "{{ services_dir }}/consul"
+  conf_dir: "{{ services_dir }}/consul/conf.d"
 
-consul_service: consul.service.consul
+  agent:
+    server: no
 
+    datacenter: dc
+    node: "{{ ansible_hostname }}"
 
-# Agent settings
-consul_server: no
+    encrypt: ''
 
-consul_datacenter: dc
-consul_node: "{{ ansible_hostname }}"
-
-consul_encrypt: ''
-
-consul_servers: "{{ groups['servers'] }}"
-
-
-# Container settings
-consul_container:
-  image: consul:1.4.4
-  name: consul
-  restart: always
-  network: "{{ consul_network }}"
-
-
-# Exporter settings
-consul_exporter:
-  host: "{{ private_network.address }}"
-  port: 9107
+    servers: []
 
   container:
-    image: prom/consul-exporter:v0.4.0
-    name: consul_exporter
-    dns: "{{ private_network.address }}"
-    network: "{{ consul_network }}"
+    image: consul:1.4.4
+    name: consul
     restart: always
+    network: ''
 
-  service:
-    name: consul-exporter
-    tags:
-      - "{{ env }}"
-    meta:
-      hostname: "{{ ansible_hostname }}"
-      tier: "{{ env }}"
+    syslog:
+      enabled: no
+      host: unixgram:///dev/log
+      tag: consul
+
+  exporter:
+    enabled: no
+
+    host: "{{ private_network.address }}"
+    port: 9107
+
+    container:
+      image: prom/consul-exporter:v0.4.0
+      name: consul_exporter
+      dns: "{{ private_network.address }}"
+      network: ''
+      restart: always
+
+      syslog:
+        enabled: no
+        host: unixgram:///dev/log
+        tag: consul_exporter
+
+    service:
+      name: consul-exporter
+      tags:
+        - "{{ env }}"
+      meta:
+        hostname: "{{ ansible_hostname }}"
+        tier: "{{ env }}"
