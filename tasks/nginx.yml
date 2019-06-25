@@ -1,0 +1,25 @@
+---
+
+- name: Prepare folders
+  file: path={{ item }} state=directory
+  with_items:
+    - "{{ nginx.services_dir }}/consul"
+    - /var/log/nginx/consul
+
+- name: Assemble basic auth htpasswd
+  htpasswd:
+    path: "{{ nginx.conf_dir }}/consul.htpasswd"
+    name: "{{ auth.user }}"
+    password: "{{ auth.password }}"
+
+- name: Assemble nginx config
+  template: src="{{ item.src }}" dest="{{ item.dest }}"
+  with_items:
+    - src: nginx/consul-template.conf.j2
+      dest: "{{ nginx.templates_dir }}/consul.conf"
+
+- name: Assemble consul-template service config
+  template:
+    src: nginx/consul-template.service.j2
+    dest: "{{ nginx.services_dir }}/consul/run"
+    mode: 'u+x'

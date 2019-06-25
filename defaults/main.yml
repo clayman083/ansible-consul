@@ -53,3 +53,10 @@ consul:
       meta:
         hostname: "{{ ansible_hostname }}"
         tier: "{{ env }}"
+
+  frontend:
+    domain: consul.example.com
+
+    auth:
+      user: consul
+      password: consul

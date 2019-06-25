@@ -1,0 +1,5 @@
+#!/bin/sh
+
+exec consul-template \
+     -consul-addr "{{ discovery.host }}:{{ discovery.port }}" \
+     -template "/etc/consul-templates/consul.conf:/etc/nginx/conf.d/consul.conf:sv hup nginx"
