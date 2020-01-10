@@ -1,0 +1,33 @@
+---
+
+- name: Converge
+  hosts: all
+  become: true
+
+  vars:
+    env: develop
+
+    services_dir: /opt/services
+
+    private_network: "{{ ansible_eth0['ipv4'] }}"
+
+    consul:
+      agent:
+        server: yes
+        encrypt: SXlrC5I3W8s5Y1KT+H5xFsodZb1n4vhV
+
+        servers:
+          - instance
+
+  pre_tasks:
+    - name: Prepare dnsmasq config folder
+      file: state=directory path="{{ consul.dnsmasq_conf_dir }}"
+
+  roles:
+    - role: docker
+    - role: dnsmasq
+    - role: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
+
+  tasks:
+    - name: Install test requirements
+      apt: name=curl

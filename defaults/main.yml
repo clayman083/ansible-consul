@@ -8,7 +8,7 @@ consul:
   conf_dir: "{{ services_dir }}/consul/conf.d"
 
   agent:
-    server: no
+    server: false
 
     datacenter: dc
     node: "{{ ansible_hostname }}"
@@ -24,12 +24,12 @@ consul:
     network: ''
 
     syslog:
-      enabled: no
+      enabled: false
       host: unixgram:///dev/log
       tag: consul
 
   exporter:
-    enabled: no
+    enabled: false
 
     host: "{{ private_network.address }}"
     port: 9107
@@ -42,7 +42,7 @@ consul:
       restart: always
 
       syslog:
-        enabled: no
+        enabled: false
         host: unixgram:///dev/log
         tag: consul_exporter
 

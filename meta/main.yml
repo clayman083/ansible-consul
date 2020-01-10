@@ -1,3 +1,5 @@
+---
+
 galaxy_info:
   author: Kirill Sumorokov
   description: Configure consul service discovery.
@@ -15,4 +17,5 @@ galaxy_info:
   galaxy_tags: ['consul']
 
   dependencies:
+    - docker
     - dnsmasq
