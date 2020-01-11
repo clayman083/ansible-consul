@@ -40,12 +40,6 @@ services:
     image: {{ consul.exporter.container.image }}
     dns: {{ consul.exporter.container.dns }}
     command: --consul.server={{ private_network.address }}:8500
-    environment:
-      - SERVICE_NAME={{ consul.exporter.service.name }}
-      - SERVICE_80_CHECK_HTTP=/
-      - SERVICE_80_CHECK_INTERVAL=20s
-      - SERVICE_HOSTNAME="{{ ansible_hostname }}"
-      - SERVICE_TIER="{{ env }}"
 {% if consul.exporter.container.syslog.enabled %}
     logging:
       driver: syslog

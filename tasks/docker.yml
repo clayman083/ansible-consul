@@ -12,14 +12,6 @@
       dest: "{{ consul.service_dir }}/docker-compose.yml"
   notify: restart consul
 
-- name: Assemble consul service config
-  template: src={{ item.src }}.j2 dest={{ item.dest }}
-  with_items:
-    - src: consul.json
-      dest: "{{ consul.conf_dir }}/consul.json"
-  when: consul.exporter.enabled|default(False)
-  notify: reload consul
-
 - name: Assemble consul dnsmasq config
   template: src={{ item.src }}.j2 dest={{ item.dest }}
   with_items:

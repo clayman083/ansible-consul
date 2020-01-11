@@ -18,7 +18,7 @@ consul:
     servers: []
 
   container:
-    image: consul:1.4.4
+    image: consul:1.6
     name: consul
     restart: always
     network: ''
@@ -45,14 +45,6 @@ consul:
         enabled: false
         host: unixgram:///dev/log
         tag: consul_exporter
-
-    service:
-      name: consul-exporter
-      tags:
-        - "{{ env }}"
-      meta:
-        hostname: "{{ ansible_hostname }}"
-        tier: "{{ env }}"
 
   frontend:
     domain: consul.example.com

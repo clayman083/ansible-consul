@@ -19,15 +19,27 @@
         servers:
           - instance
 
-  pre_tasks:
-    - name: Prepare dnsmasq config folder
-      file: state=directory path="{{ consul.dnsmasq_conf_dir }}"
-
   roles:
-    - role: docker
     - role: dnsmasq
     - role: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
 
   tasks:
+    - name: Add services to Consul Catalog
+      include_role:
+        name: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
+        tasks_from: services
+      vars:
+        services:
+          - name: postgresql
+            entries:
+              - name: postgresql
+                host: 127.0.0.1
+                port: 5432
+                tags:
+                  - "{{ env }}"
+                meta:
+                  hostname: "{{ ansible_hostname }}"
+                  tier: "{{ env }}"
+
     - name: Install test requirements
       apt: name=curl
