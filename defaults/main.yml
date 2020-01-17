@@ -7,6 +7,9 @@ consul:
   service_dir: "{{ services_dir }}/consul"
   conf_dir: "{{ services_dir }}/consul/conf.d"
 
+  host: "{{ private_network.address }}"
+  port: 8500
+
   agent:
     server: false
 

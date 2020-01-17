@@ -16,6 +16,6 @@
   template: src={{ item.src }}.j2 dest={{ item.dest }}
   with_items:
     - src: dnsmasq.conf
-      dest: "{{ consul.dnsmasq_conf_dir }}/consul.json"
+      dest: "{{ consul.dnsmasq_conf_dir }}/consul.conf"
   when: consul.dnsmasq_conf_dir|default(False)
   notify: restart dnsmasq
