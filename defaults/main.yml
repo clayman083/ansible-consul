@@ -24,7 +24,8 @@ consul:
     image: consul:1.6
     name: consul
     restart: always
-    network: ''
+    networks: []
+    labels: []
 
     syslog:
       enabled: false
@@ -41,7 +42,8 @@ consul:
       image: prom/consul-exporter:v0.4.0
       name: consul_exporter
       dns: "{{ private_network.address }}"
-      network: ''
+      networks: []
+      labels: []
       restart: always
 
       syslog:

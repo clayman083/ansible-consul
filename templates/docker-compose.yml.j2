@@ -2,6 +2,20 @@
 
 version: '3.5'
 
+{% if consul.container.networks or consul.exporter.container.networks %}
+networks:
+{% for network in consul.container.networks %}
+  {{ network.name }}:
+    external: true
+{% endfor %}
+{% for network in consul.exporter.container.networks %}
+{% if network not in consul.container.networks|default([]) %}
+  {{ network.name }}:
+    external: true
+{% endif %}
+{% endfor %}
+{% endif %}
+
 volumes:
   data:
 
@@ -12,12 +26,24 @@ services:
     command: consul agent -config-file /etc/consul/config.json -config-dir /etc/consul/conf.d
     environment:
       - SERVICE_IGNORE=true
+{% if consul.container.labels %}
+    labels:
+{% for label in consul.container.labels|default([]) %}
+      - {{ label }}
+{% endfor %}
+{% endif %}
 {% if consul.container.syslog.enabled %}
     logging:
       driver: syslog
       options:
         syslog-address: "{{ consul.container.syslog.host }}"
         tag: {{ consul.container.syslog.tag }}
+{% endif %}
+{% if consul.container.networks %}
+    networks:
+{% for network in consul.container.networks %}
+      - {{ network.name }}
+{% endfor %}
 {% endif %}
     ports:
       - {{ private_network.address }}:8300:8300
@@ -40,12 +66,24 @@ services:
     image: {{ consul.exporter.container.image }}
     dns: {{ consul.exporter.container.dns }}
     command: --consul.server={{ private_network.address }}:8500
+{% if consul.container.labels %}
+    labels:
+{% for label in consul.container.labels|default([]) %}
+      - {{ label }}
+{% endfor %}
+{% endif %}
 {% if consul.exporter.container.syslog.enabled %}
     logging:
       driver: syslog
       options:
         syslog-address: "{{ consul.exporter.container.syslog.host }}"
         tag: {{ consul.exporter.container.syslog.tag }}
+{% endif %}
+{% if consul.exporter.container.networks %}
+    networks:
+{% for network in consul.exporter.container.networks|default([]) %}
+      - {{ network.name }}
+{% endfor %}
 {% endif %}
     ports:
       - {{ consul.exporter.host }}:{{ consul.exporter.port }}:9107
